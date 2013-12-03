@@ -1,37 +1,40 @@
 import sublime, sublime_plugin,re
 
 class HtmlJoinerCommand(sublime_plugin.TextCommand):
-	# str = '<div class="test"></div>'
+
 	def run(self, edit):
-		# self.view.insert(edit, 0, '<div class="test"></div>')
-		 # print self.view.sel()
+
 		selections = self.view.sel()
-		# regions = self.view.find_all("\n");
-		# print selections
+
 		outstr = ""
 
 		out_array = []
-		# print selections
+
 		for i in range(len(selections)):
-			# print sublime.Region(regions[i].a,regions[i].b)
-			# print self.view.substr(selections[i])
+
 			outstr += self.view.substr(selections[i])
 
-			# print outstr
 			tmp_array = outstr.split("\n")
-			# tmp_array = [1]
-			for j in range(len(tmp_array)):
-				# print tmp_array[i]['p']
-				out_array.append(self.wrap(tmp_array[j]))
 
-			# print "+\n".join(out_array)
-			# print selections[i]
-			# self.view.erase(edit,selections[i])
+			for j in range(len(tmp_array)):
+
+				out_array.append(self.__join(tmp_array[j]))
+
 			self.view.replace(edit,selections[i],"+\n".join(out_array))
 
-	def wrap(self,str):
+	def __toggle(self,str):
 
-		if re.match(r"\'",str):
+		if re.search(r"^('|\"|\+)|('|\"|\+)$",str):
+			print "unjoin"
+			return self.__unjoin(self,str)
+
+		else:
+			print "join"
+			return self.__join(self,str)
+
+	def __join(self,str):
+		
+		if re.search("\'",str):
 
 			splitter = "\""
 
@@ -41,10 +44,10 @@ class HtmlJoinerCommand(sublime_plugin.TextCommand):
 
 		return splitter + str + splitter
 
+	def __unjoin(self,str):
+
+		return re.sub(r"^('|\"|\+)|('|\"|\+)$","",str)
 
 
-        # if len(selections) == 1 and selections[0].empty():
-        #     selections = [sublime.Region(0, self.view.size())]
-		# print len(selections)
-		# break
-		# print re.match(r"\'",self.view)
+
+
