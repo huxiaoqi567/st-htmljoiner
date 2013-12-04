@@ -18,19 +18,19 @@ class HtmlJoinerCommand(sublime_plugin.TextCommand):
 
 			for j in range(len(tmp_array)):
 
-				out_array.append(self.__join(tmp_array[j]))
+				out_array.append(self.__toggle(tmp_array[j]))
 
 			self.view.replace(edit,selections[i],"+\n".join(out_array))
 
 	def __toggle(self,str):
 
 		if re.search(r"^('|\"|\+)|('|\"|\+)$",str):
-			print "unjoin"
-			return self.__unjoin(self,str)
+
+			return self.__unjoin(str)
 
 		else:
-			print "join"
-			return self.__join(self,str)
+
+			return self.__join(str)
 
 	def __join(self,str):
 		
@@ -45,8 +45,8 @@ class HtmlJoinerCommand(sublime_plugin.TextCommand):
 		return splitter + str + splitter
 
 	def __unjoin(self,str):
-
-		return re.sub(r"^('|\"|\+)|('|\"|\+)$","",str)
+		
+		return re.sub(r"^('|\"|\+)|(('\s*\+\s*\n*)|(\"\s*\+\s*\n*)|('\s*\n*)|(\"\s*\n*))$","",str)
 
 
 
